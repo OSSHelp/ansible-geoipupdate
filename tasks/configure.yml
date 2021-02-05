@@ -1,0 +1,22 @@
+---
+- name: Notify if required params not defined
+  assert:
+    that:
+      - geoip_account_id is defined
+      - geoip_license_key is defined
+    fail_msg: "Required params are not defined. You must specify geoip_account_id and geoip_license_key in role parameters."
+
+- name: generate geoip config
+  template:
+    src: GeoIP.conf.j2
+    dest: /etc/GeoIP.conf
+    mode: 0600
+
+- name: Check that the databases exist
+  stat:
+    path: /usr/share/GeoIP/.geoipupdate.lock
+  register: lockfile
+
+- name: update geoip database
+  command: /usr/bin/geoipupdate
+  when: not lockfile.stat.exists or geoipupdate_force_database_update

@@ -1,0 +1,8 @@
+---
+- name: install
+  include_tasks: install.yml
+  when: geoipupdate_setup == "full" or geoipupdate_setup == "install"
+
+- name: configure
+  import_tasks: configure.yml
+  when: geoipupdate_setup == "full" or geoipupdate_setup == "configure"
